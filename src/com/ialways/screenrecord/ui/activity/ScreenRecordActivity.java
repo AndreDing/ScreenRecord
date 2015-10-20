@@ -1,4 +1,4 @@
-package com.ialways.screensave.ui.activity;
+package com.ialways.screenrecord.ui.activity;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -20,7 +20,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
 
-public class ScreenSaveActivity extends FragmentActivity {
+public class ScreenRecordActivity extends FragmentActivity {
 
     private MediaProjectionManager mMediaMgr;
 

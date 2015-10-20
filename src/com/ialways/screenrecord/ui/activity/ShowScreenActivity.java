@@ -1,4 +1,4 @@
-package com.ialways.screensave;
+package com.ialways.screenrecord.ui.activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +23,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.ToggleButton;
 
-public class MainActivity extends FragmentActivity {
-    
+import com.ialways.screensave.R;
+
+public class ShowScreenActivity extends FragmentActivity {
+
     private static final String TAG = "MediaProjectionDemo";
     private static final List<Resolution> RESOLUTIONS = new ArrayList<Resolution>() {{
         add(new Resolution(640,360));
