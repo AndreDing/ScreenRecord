@@ -64,6 +64,13 @@ public class ScreenRecordActivity extends FragmentActivity {
             drainEncoder();
         }
     };
+    
+    public static void start(Context ctx, int tab) {
+        Intent i = new Intent(ctx, ScreenRecordActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        ctx.startActivity(i);
+    }
 
     @Override
     protected void onCreate(Bundle bundle) {
