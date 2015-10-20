@@ -3,6 +3,8 @@ package com.ialways.screenrecord.ui.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ialways.screenrecord.R;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,8 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.ToggleButton;
-
-import com.ialways.screensave.R;
 
 public class ShowScreenActivity extends FragmentActivity {
 
