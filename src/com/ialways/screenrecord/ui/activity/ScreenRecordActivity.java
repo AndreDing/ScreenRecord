@@ -1,3 +1,7 @@
+/**
+ * Code from http://mattsnider.com/video-recording-with-mediaprojectionmanager/
+ * author:mattsnider
+ */
 package com.ialways.screenrecord.ui.activity;
 
 import java.io.IOException;
@@ -25,8 +29,29 @@ public class ScreenRecordActivity extends FragmentActivity {
     private MediaProjectionManager mMediaMgr;
 
     private static final int REQUEST_CODE_CAPTURE = 1234;
-    // 30fps
+    // 30fps(帧率)
     private static final int FRAME_RATE = 30;
+    
+    private static final String VIDEO_MIME_TYPE = "video/avc";
+    
+    private static int VIDEO_WIDTH;
+    private static int VIDEO_HEIGHT;
+    
+    private boolean mMuxerStarted = false;
+    private MediaProjection mMediaProjection;
+    private Surface mInputSurface;
+    private MediaMuxer mMuxer;
+    private MediaCodec mVideoEncoder;
+    private MediaCodec.BufferInfo mVideoBufferInfo;
+    private int mTrackIndex = -1;
+    
+    private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
+    private Runnable mDrainEncoderRunnable = new Runnable() {
+        @Override
+        public void run() {
+            drainEncoder();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -37,6 +62,12 @@ public class ScreenRecordActivity extends FragmentActivity {
 
         Intent mPermissionIntent = mMediaMgr.createScreenCaptureIntent();
         this.startActivityForResult(mPermissionIntent, REQUEST_CODE_CAPTURE);
+        
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        
+        VIDEO_WIDTH = metrics.widthPixels;
+        VIDEO_HEIGHT = metrics.heightPixels;
     }
 
     @Override
@@ -49,29 +80,6 @@ public class ScreenRecordActivity extends FragmentActivity {
             startRecording();
         }
     }
-
-    // in the same activity
-    private static final String VIDEO_MIME_TYPE = "video/avc";
-    private static final int VIDEO_WIDTH = 1280;
-    private static final int VIDEO_HEIGHT = 1920;
-    // …
-    private boolean mMuxerStarted = false;
-    private MediaProjection mMediaProjection;
-    private Surface mInputSurface;
-    private MediaMuxer mMuxer;
-    private MediaCodec mVideoEncoder;
-    private MediaCodec.BufferInfo mVideoBufferInfo;
-    private int mTrackIndex = -1;
-
-    private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
-    private Runnable mDrainEncoderRunnable = new Runnable() {
-        @Override
-        public void run() {
-            drainEncoder();
-        }
-    };
-
-    // …
 
     private void startRecording() {
         DisplayManager dm = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
@@ -112,14 +120,13 @@ public class ScreenRecordActivity extends FragmentActivity {
     private void prepareVideoEncoder() {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
         MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
-        int frameRate = 30; // 30 fps
 
         // Set some required properties. The media codec may fail if these aren't defined.
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, 6000000); // 6Mbps
-        format.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-        format.setInteger(MediaFormat.KEY_CAPTURE_RATE, frameRate);
-        format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / frameRate);
+        format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+        format.setInteger(MediaFormat.KEY_CAPTURE_RATE, FRAME_RATE);
+        format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / FRAME_RATE);
         format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1); // 1 seconds between I-frames
 
