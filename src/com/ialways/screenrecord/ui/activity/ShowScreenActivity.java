@@ -28,58 +28,71 @@ import android.widget.ToggleButton;
 public class ShowScreenActivity extends FragmentActivity {
 
     private static final String TAG = "MediaProjectionDemo";
-    private static final List<Resolution> RESOLUTIONS = new ArrayList<Resolution>() {{
-        add(new Resolution(640,360));
-        add(new Resolution(960,540));
-        add(new Resolution(1366,768));
-        add(new Resolution(1600,900));
-    }};
+
+    private static final List<Resolution> RESOLUTIONS = new ArrayList<Resolution>() {
+        {
+            add(new Resolution(640, 360));
+            add(new Resolution(960, 540));
+            add(new Resolution(1366, 768));
+            add(new Resolution(1600, 900));
+        }
+    };
 
     private MediaProjectionManager mMediaProjectionManager;
+
     private MediaProjection mMediaProjection;
+
     private VirtualDisplay mVirtualDisplay;
+
     private final static int REQUEST_CODE = 1000;
-    
+
     private int mScreenDensity;
+
     private int mDisplayWidth;
+
     private int mDisplayHeight;
+
     private boolean mScreenSharing;
+
     private Surface mSurface;
+
     private SurfaceView mSurfaceView;
+
     private ToggleButton mToggle;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mScreenDensity = metrics.densityDpi;
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         mSurface = mSurfaceView.getHolder().getSurface();
-        
-        ArrayAdapter<Resolution> arrayAdapter = new ArrayAdapter<Resolution>(
-                this, android.R.layout.simple_list_item_1, RESOLUTIONS);
+
+        ArrayAdapter<Resolution> arrayAdapter = new ArrayAdapter<Resolution>(this, android.R.layout.simple_list_item_1,
+                RESOLUTIONS);
         Spinner s = (Spinner) findViewById(R.id.spinner);
         s.setAdapter(arrayAdapter);
         s.setOnItemSelectedListener(new ResolutionSelector());
         s.setSelection(0);
 
         mToggle = (ToggleButton) findViewById(R.id.screen_sharing_toggle);
-        
+
         mMediaProjectionManager = (MediaProjectionManager) this.getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-//        Intent captureIntent = mMediaProjectionManager.createScreenCaptureIntent(); 
-////        this.startActivity(captureIntent);
-//        this.startActivityForResult(captureIntent, REQUEST_CODE);
+        // Intent captureIntent =
+        // mMediaProjectionManager.createScreenCaptureIntent();
+        // // this.startActivity(captureIntent);
+        // this.startActivityForResult(captureIntent, REQUEST_CODE);
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
-        
+
         if (requestCode != REQUEST_CODE) {
             return;
         }
@@ -90,7 +103,7 @@ public class ShowScreenActivity extends FragmentActivity {
         mMediaProjection.registerCallback(new MediaProjectionCallback(), null);
         mVirtualDisplay = createVirtualDisplay();
     }
-    
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -99,7 +112,7 @@ public class ShowScreenActivity extends FragmentActivity {
             mMediaProjection = null;
         }
     }
-    
+
     public void onToggleScreenShare(View view) {
         if (((ToggleButton) view).isChecked()) {
             shareScreen();
@@ -114,8 +127,7 @@ public class ShowScreenActivity extends FragmentActivity {
             return;
         }
         if (mMediaProjection == null) {
-            startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(),
-                    REQUEST_CODE);
+            startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), REQUEST_CODE);
             return;
         }
         mVirtualDisplay = createVirtualDisplay();
@@ -133,26 +145,24 @@ public class ShowScreenActivity extends FragmentActivity {
     }
 
     private VirtualDisplay createVirtualDisplay() {
-        return mMediaProjection.createVirtualDisplay("ScreenSharingDemo",
-                mDisplayWidth, mDisplayHeight, mScreenDensity,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY,
-                mSurface, null /*Callbacks*/, null /*Handler*/);
+        return mMediaProjection.createVirtualDisplay("ScreenSharingDemo", mDisplayWidth, mDisplayHeight,
+                mScreenDensity, DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY, mSurface, null /* Callbacks */,
+                null /* Handler */);
     }
 
-//    private void resizeVirtualDisplay() {
-//        if (mVirtualDisplay == null) {
-//            return;
-//        }
-//        mVirtualDisplay.resize(mDisplayWidth, mDisplayHeight, mScreenDensity);
-//    }
+    // private void resizeVirtualDisplay() {
+    // if (mVirtualDisplay == null) {
+    // return;
+    // }
+    // mVirtualDisplay.resize(mDisplayWidth, mDisplayHeight, mScreenDensity);
+    // }
 
     private class ResolutionSelector implements Spinner.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
             Resolution r = (Resolution) parent.getItemAtPosition(pos);
             ViewGroup.LayoutParams lp = mSurfaceView.getLayoutParams();
-            if (getResources().getConfiguration().orientation
-                    == Configuration.ORIENTATION_LANDSCAPE) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 mDisplayHeight = r.y;
                 mDisplayWidth = r.x;
             } else {
@@ -165,7 +175,8 @@ public class ShowScreenActivity extends FragmentActivity {
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> parent) { /* Ignore */ }
+        public void onNothingSelected(AdapterView<?> parent) { /* Ignore */
+        }
     }
 
     private class MediaProjectionCallback extends MediaProjection.Callback {
@@ -181,7 +192,7 @@ public class ShowScreenActivity extends FragmentActivity {
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
             mDisplayWidth = width;
             mDisplayHeight = height;
-//            resizeVirtualDisplay();
+            // resizeVirtualDisplay();
         }
 
         @Override
@@ -202,6 +213,7 @@ public class ShowScreenActivity extends FragmentActivity {
 
     private static class Resolution {
         int x;
+
         int y;
 
         public Resolution(int x, int y) {

@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -29,23 +30,34 @@ public class ScreenRecordActivity extends FragmentActivity {
     private MediaProjectionManager mMediaMgr;
 
     private static final int REQUEST_CODE_CAPTURE = 1234;
+
     // 30fps(帧率)
     private static final int FRAME_RATE = 30;
-    
+
     private static final String VIDEO_MIME_TYPE = "video/avc";
-    
+
     private static int VIDEO_WIDTH;
+
     private static int VIDEO_HEIGHT;
-    
+
     private boolean mMuxerStarted = false;
+
     private MediaProjection mMediaProjection;
+
     private Surface mInputSurface;
+
     private MediaMuxer mMuxer;
+
     private MediaCodec mVideoEncoder;
+
     private MediaCodec.BufferInfo mVideoBufferInfo;
+
     private int mTrackIndex = -1;
-    
+
+    private SensorManager mSensorMgr;
+
     private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
+
     private Runnable mDrainEncoderRunnable = new Runnable() {
         @Override
         public void run() {
@@ -58,16 +70,17 @@ public class ScreenRecordActivity extends FragmentActivity {
         // TODO Auto-generated method stub
         super.onCreate(bundle);
 
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        VIDEO_WIDTH = metrics.widthPixels;
+        VIDEO_HEIGHT = metrics.heightPixels;
+
         this.mMediaMgr = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        this.mSensorMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         Intent mPermissionIntent = mMediaMgr.createScreenCaptureIntent();
         this.startActivityForResult(mPermissionIntent, REQUEST_CODE_CAPTURE);
-        
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        
-        VIDEO_WIDTH = metrics.widthPixels;
-        VIDEO_HEIGHT = metrics.heightPixels;
     }
 
     @Override
@@ -95,25 +108,25 @@ public class ScreenRecordActivity extends FragmentActivity {
             throw new RuntimeException("MediaMuxer creation failed", ioe);
         }
 
-        // Get the display size and density.  
+        // Get the display size and density.
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         int screenWidth = metrics.widthPixels;
         int screenHeight = metrics.heightPixels;
-        int screenDensity = metrics.densityDpi;  
+        int screenDensity = metrics.densityDpi;
 
         // Start the video input.
-        mMediaProjection
-                .createVirtualDisplay("Recording Display", screenWidth, screenHeight, screenDensity, 0 /* flags */, mInputSurface, null /* callback */, null /* handler */);
+        mMediaProjection.createVirtualDisplay("Recording Display", screenWidth, screenHeight, screenDensity,
+                0 /* flags */, mInputSurface, null /* callback */, null /* handler */);
 
         // Start the encoders
         drainEncoder();
     }
-    
+
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        
+
         releaseEncoders();
     }
 
@@ -121,16 +134,20 @@ public class ScreenRecordActivity extends FragmentActivity {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
         MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
 
-        // Set some required properties. The media codec may fail if these aren't defined.
+        // Set some required properties. The media codec may fail if these
+        // aren't defined.
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, 6000000); // 6Mbps
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_CAPTURE_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / FRAME_RATE);
         format.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1); // 1 seconds between I-frames
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1); // 1 seconds
+                                                                // between
+                                                                // I-frames
 
-        // Create a MediaCodec encoder and configure it. Get a Surface we can use for recording into.
+        // Create a MediaCodec encoder and configure it. Get a Surface we can
+        // use for recording into.
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_MIME_TYPE);
             mVideoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
@@ -150,7 +167,8 @@ public class ScreenRecordActivity extends FragmentActivity {
                 // nothing available yet
                 break;
             } else if (bufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                // should happen before receiving buffers, and should only happen once
+                // should happen before receiving buffers, and should only
+                // happen once
                 if (mTrackIndex >= 0) {
                     throw new RuntimeException("format changed twice");
                 }
