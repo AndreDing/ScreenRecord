@@ -18,8 +18,7 @@
  * 日期：${date}      
  * 版权所有  
  */</template><template autoinsert="false" context="gettercomment_context" deleted="false" description="Comment for getter method" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.gettercomment" name="gettercomment">/**    
- * ${bare_field_name}    
- *    
+ * ${bare_field_name}  
  * @return  the ${bare_field_name}       
 */    
 </template><template autoinsert="true" context="overridecomment_context" deleted="false" description="Comment for overriding methods" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.overridecomment" name="overridecomment">/* (non-Javadoc)    

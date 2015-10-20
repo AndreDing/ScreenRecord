@@ -7,6 +7,8 @@ package com.ialways.screenrecord.ui.activity;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import com.ialways.screenrecord.utils.storage.PathUtils;
+
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
@@ -82,6 +84,8 @@ public class ScreenRecordActivity extends FragmentActivity {
 
         VIDEO_WIDTH = metrics.widthPixels;
         VIDEO_HEIGHT = metrics.heightPixels;
+        
+        System.out.println("file path : " + PathUtils.getRecordFilePath(this));
 
         this.mMediaMgr = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         this.mSensorMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

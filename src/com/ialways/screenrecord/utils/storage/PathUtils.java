@@ -4,12 +4,14 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.ialways.screenrecord.common.Constants;
+
 import android.content.Context;
 
 public final class PathUtils {
 
     /** 应用目录数据保存根目录 */
-    public static final String PATH_APP_DIR = ".screen";
+    public static final String PATH_APP_DIR = "screenrecord";
 
     /** 相对根目录：字体资源存储目录 */
     public static final String PATH_SUB_DIR_FONT = "font";
@@ -47,10 +49,11 @@ public final class PathUtils {
         return subDir;
     }
 
-    public static File getRecordFile(Context context) {
+    public static String getRecordFilePath(Context context) {
         String parentPath = getRecordDir(context).getAbsolutePath();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");     
         String date = sDateFormat.format(new Date());  
+        return parentPath + Constants.PunctuationConstants.SLASH + date + Constants.FileConstants.MOVIE_RECORD_FORMAT;
     }
 
     public static File getRecordDir(Context context) {
