@@ -1,0 +1,40 @@
+代码拉取步骤：
+创建版本库：git clone https://github.com/AndreDing/ScreenRecord.git
+代码拉去：git pull
+配置提交格式：git config commit.template commit.formmater
+代码状态：git status
+代码提交：
+1.delete部分:git rm <文件名>(用"."表示全部：git rm .)
+2.add、motify部分:git add <文件名>（用"."表示全部：git add .）
+代码提交：
+git commit <文件名> (用"."表示全部提交：git commit .)
+上传到服务器：
+git push ScreenRecord master
+
+查看代码提交记录：
+git log
+比对代码：
+git diff
+
+代码回滚：
+git reset --hard <commit-id>（commit-id通过git log获取）
+
+代码提交注意：
+最好配置commit.template，并添加提交概要（方便代码管理）
+提交前必须git pull（防止代码冲突）
+步骤：
+1.git pull
+2.git add/rm
+3.git commit
+4.git push <服务器文件名> <本地分支>（如git push ScreenRecord master）
+
+代码冲突修改：
+如果出现代码冲突：
+1.将自己的代码备份，
+2.然后将代码还原：git reset --hard HEAD（回滚到最新版本）
+3.拉去最新代码git pull
+4.将自己代码重新修改上去
+5.git pull
+6.git add/rm
+7.git commit
+8.git push <服务器文件名> <本地分支>
