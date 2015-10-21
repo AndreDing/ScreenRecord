@@ -3,6 +3,7 @@ package com.ialways.screenrecord.ui.manager;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
@@ -55,24 +56,20 @@ public class ScreenRecordMgr implements Initializable {
 
     private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
 
-    private Runnable mDrainEncoderRunnable = new Runnable() {
-        @Override
-        public void run() {
-            drainEncoder();
-        }
-    };
+    private Runnable mDrainEncoderRunnable;
 
     public static ScreenRecordMgr shared() {
         return MainApp.shared().get(ScreenRecordMgr.class);
     }
 
     public void init(Context context) {
-
+        
         DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         Display defaultDisplay = dm.getDisplay(Display.DEFAULT_DISPLAY);
         if (defaultDisplay == null) {
             throw new RuntimeException("No display found.");
         }
+
         // Get the display size and density.
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mVideoWidth = metrics.widthPixels;
@@ -81,7 +78,15 @@ public class ScreenRecordMgr implements Initializable {
     }
 
     public void start(MediaProjection mediaProjection) {
-
+        
+        mDrainEncoderRunnable = new Runnable() {
+            
+            @Override
+            public void run() {
+                drainEncoder();
+            }
+        };
+        
         prepareVideoEncoder();
         try {
             mMuxer = new MediaMuxer(PathUtils.getRecordFilePath(MainApp.shared()), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -128,12 +133,6 @@ public class ScreenRecordMgr implements Initializable {
 
     private boolean drainEncoder() {
         mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
-        if (mVideoEncoder == null) {
-            System.out.println("mVideoEncoder is null");
-        }
-        if (mVideoBufferInfo == null) {
-            System.out.println("mVideoBufferInfo is null");
-        }
         while (true) {
             int bufferIndex = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
 
@@ -186,7 +185,10 @@ public class ScreenRecordMgr implements Initializable {
     }
 
     public void releaseEncoders() {
-        mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
+        if (mDrainEncoderRunnable != null) {
+            mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
+            mDrainEncoderRunnable = null;
+        }
         if (mMuxer != null) {
             if (mMuxerStarted) {
                 mMuxer.stop();

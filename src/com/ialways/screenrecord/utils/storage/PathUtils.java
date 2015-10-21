@@ -53,7 +53,7 @@ public final class PathUtils {
         String parentPath = getRecordDir(context).getAbsolutePath();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");     
         String date = sDateFormat.format(new Date());  
-        return "sdcard" + Constants.PunctuationConstants.SLASH + date + Constants.FileConstants.MOVIE_RECORD_FORMAT;
+        return parentPath + Constants.PunctuationConstants.SLASH + date + Constants.FileConstants.MOVIE_RECORD_FORMAT;
     }
 
     public static File getRecordDir(Context context) {

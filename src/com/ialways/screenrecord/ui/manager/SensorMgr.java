@@ -45,7 +45,6 @@ public class SensorMgr implements Initializable {
                     ScreenRecordActivity.start(MainApp.shared());
                     MainApp.shared().stopService(ScreenRecordService.class);
                 }
-
             }
         }
 
