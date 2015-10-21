@@ -3,7 +3,6 @@ package com.ialways.screenrecord.ui.manager;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
@@ -211,7 +210,6 @@ public class ScreenRecordMgr implements Initializable {
             mMediaProjection = null;
         }
         mVideoBufferInfo = null;
-        mDrainEncoderRunnable = null;
         mTrackIndex = -1;
     }
 }

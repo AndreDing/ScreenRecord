@@ -57,7 +57,7 @@ public class ScreenRecordActivity extends FragmentActivity {
         mStartBtn.setOnClickListener(new OnClickListener() {
 
             @Override
-            public void onClick(View arg0) {
+            public void onClick(View view) {
                 // TODO Auto-generated method stub
                 // 进行权限验证
                 Intent mPermissionIntent = mMediaMgr.createScreenCaptureIntent();
