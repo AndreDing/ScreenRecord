@@ -3,10 +3,6 @@ package com.ialways.screenrecord.ui.manager;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import com.ialways.screenrecord.ui.Initializable;
-import com.ialways.screenrecord.ui.MainApp;
-import com.ialways.screenrecord.utils.storage.PathUtils;
-
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
@@ -20,40 +16,58 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
 
+import com.ialways.screenrecord.ui.Initializable;
+import com.ialways.screenrecord.ui.MainApp;
+import com.ialways.screenrecord.utils.storage.PathUtils;
+
+/**
+ * 项目名称：ScreenRecord 类名称：ScreenRecordMgr 类描述： 视屏录制管理器 创建人：dingchao
+ * 创建时间：2015年10月21日 下午2:25:14 修改人：dingchao 修改时间：2015年10月21日 下午2:25:14 修改备注：初始创建
+ * 
+ * @version 1.0
+ */
 public class ScreenRecordMgr implements Initializable {
-    
+
     // 30fps(帧率)
     private static final int FRAME_RATE = 30;
+
     private static final String VIDEO_MIME_TYPE = "video/avc";
-    
+
     private int mTrackIndex = -1;
+
     private boolean mMuxerStarted = false;
-    
+
     private MediaProjection mMediaProjection;
+
     private MediaMuxer mMuxer;
+
     private MediaCodec mVideoEncoder;
+
     private MediaCodec.BufferInfo mVideoBufferInfo;
+
     private Surface mInputSurface;
-    
+
     private int mVideoWidth;
+
     private int mVideoHeight;
+
     private int mScreenDensity;
-    
+
     private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
-    
+
     private Runnable mDrainEncoderRunnable = new Runnable() {
         @Override
         public void run() {
             drainEncoder();
         }
     };
-    
+
     public static ScreenRecordMgr shared() {
         return MainApp.shared().get(ScreenRecordMgr.class);
     }
 
     public void init(Context context) {
-        
+
         DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         Display defaultDisplay = dm.getDisplay(Display.DEFAULT_DISPLAY);
         if (defaultDisplay == null) {
@@ -64,27 +78,26 @@ public class ScreenRecordMgr implements Initializable {
         mVideoWidth = metrics.widthPixels;
         mVideoHeight = metrics.heightPixels;
         mScreenDensity = metrics.densityDpi;
-        
-        prepareVideoEncoder();
+    }
 
+    public void start(MediaProjection mediaProjection) {
+
+        prepareVideoEncoder();
         try {
-            mMuxer = new MediaMuxer("/sdcard/new.mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            mMuxer = new MediaMuxer(PathUtils.getRecordFilePath(MainApp.shared()), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         } catch (IOException ioe) {
             throw new RuntimeException("MediaMuxer creation failed", ioe);
         }
 
-    }
-    
-    public void start(MediaProjection mediaProjection) {
         this.mMediaProjection = mediaProjection;
         // Start the video input.
         mMediaProjection.createVirtualDisplay("Recording Display", mVideoWidth, mVideoHeight, mScreenDensity,
                 0 /* flags */, mInputSurface, null /* callback */, null /* handler */);
-
+        
         // Start the encoders
         drainEncoder();
     }
-    
+
     private void prepareVideoEncoder() {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
         MediaFormat format = MediaFormat.createVideoFormat(VIDEO_MIME_TYPE, mVideoWidth, mVideoHeight);
@@ -112,9 +125,15 @@ public class ScreenRecordMgr implements Initializable {
             releaseEncoders();
         }
     }
-    
+
     private boolean drainEncoder() {
         mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
+        if (mVideoEncoder == null) {
+            System.out.println("mVideoEncoder is null");
+        }
+        if (mVideoBufferInfo == null) {
+            System.out.println("mVideoBufferInfo is null");
+        }
         while (true) {
             int bufferIndex = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
 
@@ -165,7 +184,7 @@ public class ScreenRecordMgr implements Initializable {
         mDrainHandler.postDelayed(mDrainEncoderRunnable, 10);
         return false;
     }
-    
+
     public void releaseEncoders() {
         mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
         if (mMuxer != null) {

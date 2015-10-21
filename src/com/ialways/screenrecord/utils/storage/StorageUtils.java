@@ -12,8 +12,8 @@ import android.text.TextUtils;
  */
 public final class StorageUtils {
 
-    /** 存储器最小存储空间为 20M */
-    private static final long MIN_SIZE = 20 * 1024 * 1024;
+    /** 存储器最小存储空间为 5M */
+    private static final long MIN_SIZE = 5 * 1024 * 1024;
 
     private StorageUtils() {
         super();
