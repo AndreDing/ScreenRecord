@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 /**
  * 存储设备管理管理 优先级：SdCard > Memory
- * 
  */
 public final class StorageUtils {
 

@@ -7,7 +7,7 @@ package com.ialways.screenrecord.utils;
  * 创建人：dingchao    
  * 创建时间：2015年10月20日 下午5:28:49    
  * 修改备注：    
- * @version     
+ * @version 1.0
  */
 public class StringUtils {
 

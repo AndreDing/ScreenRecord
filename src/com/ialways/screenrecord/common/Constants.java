@@ -16,4 +16,9 @@ public class Constants {
         
         public final static String SLASH = "/";
     }
+    
+    public interface NetConstants {
+        
+        public final static String REQUEST_URL = "";
+    }
 }

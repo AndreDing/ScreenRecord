@@ -18,3 +18,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/* 
+
+-keep class **.R$*{*;}
+-keep attributes *Annotation*
+-keep attributes *JavascriptInterface*
+-keep class com.baidu.ops.appunion.sdk.**{*;}
+-keep class com.baidu.appsearch.**{*;}

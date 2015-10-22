@@ -16,6 +16,7 @@ import android.widget.Button;
 
 import com.ialways.screenrecord.R;
 import com.ialways.screenrecord.ui.MainApp;
+import com.ialways.screenrecord.ui.manager.AdMgr;
 import com.ialways.screenrecord.ui.manager.ScreenRecordMgr;
 import com.ialways.screenrecord.ui.service.ScreenRecordService;
 
@@ -66,6 +67,8 @@ public class ScreenRecordActivity extends FragmentActivity {
         });
 
         this.mMediaMgr = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        
+        AdMgr.shared().showImageTextBanner(this);
     }
 
     @Override

@@ -12,6 +12,16 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- 百度百通sdk start-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 用于记录uid -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- 百度百通sdk end-->
+
     <application
         android:name="com.ialways.screenrecord.ui.MainApp"
         android:allowBackup="true"
@@ -29,6 +39,24 @@
 
         <service android:name="com.ialways.screenrecord.ui.service.ScreenRecordService" >
         </service>
+
+        <!-- 百度百通sdk start-->
+        <activity
+            android:name="com.baidu.ops.appunion.sdk.activity.AppListActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
+            android:name="com.baidu.ops.appunion.sdk.activity.WebActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <service
+            android:name="com.baidu.ops.appunion.sdk.service.AppUnionService"
+            android:exported="false"
+            android:label="AppUnionService" />
+
+        <meta-data
+            android:name="BDAPPUNIONSDK_APIKEY"
+            android:value="110022b" />
+        <!-- 百度百通sdk end-->
     </application>
 
 </manifest>

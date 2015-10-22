@@ -67,7 +67,6 @@ public class SensorMgr implements Initializable {
 
     @Override
     public void init(Context ctx) {
-        // TODO Auto-generated method stub
         this.mSensorMgr = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
         this.mVibrator = (Vibrator) ctx.getSystemService(Service.VIBRATOR_SERVICE);
     }
