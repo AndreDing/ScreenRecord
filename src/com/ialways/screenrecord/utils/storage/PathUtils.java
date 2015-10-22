@@ -51,7 +51,7 @@ public final class PathUtils {
 
     public static String getRecordFilePath(Context context) {
         String parentPath = getRecordDir(context).getAbsolutePath();
-        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");     
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");     
         String date = sDateFormat.format(new Date());  
         return parentPath + Constants.PunctuationConstants.SLASH + date + Constants.FileConstants.MOVIE_RECORD_FORMAT;
     }
