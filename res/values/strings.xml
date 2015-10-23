@@ -19,5 +19,7 @@
 <resources>
 
     <string name="app_name">ScreenSave</string>
+    
+    <string name="record_start">Start Record</string>
 
 </resources>

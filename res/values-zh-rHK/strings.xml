@@ -19,5 +19,7 @@
 <resources>
 
     <string name="app_name">录屏宝</string>
+    
+    <string name="record_start">开始录制</string>
 
 </resources>

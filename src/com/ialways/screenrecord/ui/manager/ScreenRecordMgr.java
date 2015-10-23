@@ -2,8 +2,11 @@ package com.ialways.screenrecord.ui.manager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -56,6 +59,8 @@ public class ScreenRecordMgr implements Initializable {
     private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
 
     private Runnable mDrainEncoderRunnable;
+    
+    private String mCurPath;
 
     public static ScreenRecordMgr shared() {
         return MainApp.shared().get(ScreenRecordMgr.class);
@@ -87,8 +92,9 @@ public class ScreenRecordMgr implements Initializable {
         };
         
         prepareVideoEncoder();
+        mCurPath = PathUtils.getRecordFilePath(MainApp.shared());
         try {
-            mMuxer = new MediaMuxer(PathUtils.getRecordFilePath(MainApp.shared()), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            mMuxer = new MediaMuxer(mCurPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         } catch (IOException ioe) {
             throw new RuntimeException("MediaMuxer creation failed", ioe);
         }
@@ -124,6 +130,8 @@ public class ScreenRecordMgr implements Initializable {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_MIME_TYPE);
             mVideoEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mInputSurface = mVideoEncoder.createInputSurface();
+//            Rect surfaceRect = new Rect(50, 100, 300, 800);
+//            Canvas surfaceCanvas = mInputSurface.lockCanvas(surfaceRect);
             mVideoEncoder.start();
         } catch (IOException e) {
             releaseEncoders();
@@ -211,5 +219,14 @@ public class ScreenRecordMgr implements Initializable {
         }
         mVideoBufferInfo = null;
         mTrackIndex = -1;
+    }
+    
+    public String getCurFilePath() {
+        
+        return mCurPath != null ? mCurPath : "";
+    }
+    
+    public List<String> getAllRecordFile() {
+        return null;
     }
 }

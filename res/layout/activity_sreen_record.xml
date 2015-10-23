@@ -1,13 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:holo="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_1"
     android:orientation="vertical" >
-    
-    <Button 
+
+    <RelativeLayout
+        android:id="@+id/title_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_hight"
+        android:background="@color/title_bg" >
+        
+        
+        <com.ialways.screenrecord.ui.view.ProgressTextView
+            android:layout_width="80dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            holo:tv_width="80dp"
+            holo:tv_height="48dp"
+            holo:tv_size="20sp"
+            holo:in_color="@color/title_tv_color"
+            android:layout_centerInParent="true"
+            holo:tv_content="@string/app_name"
+            />
+
+        <LinearLayout
+            android:id="@+id/layout_menu"
+            android:layout_width="@dimen/title_hight"
+            android:layout_height="@dimen/title_hight"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/img_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_menu" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <Button
         android:id="@+id/start_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="start record"
-        />
+        android:text="@string/record_start" />
+
+    <TextView
+        android:id="@+id/file_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

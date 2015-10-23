@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="title_bg">#547DF9</color>
+    <color name="title_tv_color">#FFFFFF</color>
+    <color name="title_tv_shadow">#000000</color>
+    <color name="grey_1">#F1F4F9</color>
+</resources>
