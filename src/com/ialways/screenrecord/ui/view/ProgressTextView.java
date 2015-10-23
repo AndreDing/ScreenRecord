@@ -38,14 +38,12 @@ public class ProgressTextView extends View {
 
     private Rect mBound = new Rect();
 
-    private boolean hasDrawed = false;
-
     private Handler mHandler = new Handler() {
 
         public void handleMessage(Message msg) {
 
             if (mProgress < 1) {
-                mProgress += STEP;
+                mProgress += mStep;
                 ProgressTextView.this.invalidate();
                 mHandler.sendEmptyMessageDelayed(0, ANIM_TIME);
             } 

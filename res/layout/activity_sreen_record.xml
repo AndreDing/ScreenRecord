@@ -13,16 +13,15 @@
         android:background="@color/title_bg" >
         
         
-        <com.ialways.screenrecord.ui.view.ProgressTextView
-            android:layout_width="80dp"
+        <com.ialways.screenrecord.ui.view.ReunionTextView
+            android:layout_width="120dp"
             android:layout_height="48dp"
-            android:layout_gravity="center"
-            holo:tv_width="80dp"
-            holo:tv_height="48dp"
-            holo:tv_size="20sp"
-            holo:in_color="@color/title_tv_color"
+            holo:rt_tv_width="120dp"
+            holo:rt_tv_height="48dp"
+            holo:rt_tv_size="20sp"
+            holo:rt_in_color="@color/title_tv_color"
             android:layout_centerInParent="true"
-            holo:tv_content="@string/app_name"
+            holo:rt_tv_content="@string/app_name"
             />
 
         <LinearLayout

@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -13,10 +15,13 @@ import com.ialways.screenrecord.R;
 
 public class ReunionTextView extends View {
 
-    private Canvas mCanvas;
+    private final static float STEP = 0.05f;
 
+    // 动画间隔
+    private final static int ANIM_TIME = 50;
+    
     private float mWidth;
-
+       
     private float mHeight;
 
     private int mTvColor;
@@ -27,11 +32,27 @@ public class ReunionTextView extends View {
     
     private int mTvWidth;
     private int mTvHeight;
+    
+    private float mAnimWidth;
+    private float mAnimHeight;
+    
+    private float mProgress = 0;
 
     private Paint mTextPaint = new Paint();
 
     private Rect mBound = new Rect();
 
+    private Handler mHandler = new Handler() {
+
+        public void handleMessage(Message msg) {
+
+            if (mProgress < 1) {
+                mProgress += STEP;
+                ReunionTextView.this.invalidate();
+                mHandler.sendEmptyMessageDelayed(0, ANIM_TIME);
+            } 
+        }
+    };
 
     public ReunionTextView(Context context) {
         this(context, null);
@@ -70,7 +91,11 @@ public class ReunionTextView extends View {
             
             mTvWidth = mBound.width();
             mTvHeight = mBound.height();
+            
         }
+        
+        mAnimWidth = mWidth - mTvWidth;
+        mAnimHeight = mHeight - mTvHeight;
     }
 
     @Override
@@ -82,38 +107,41 @@ public class ReunionTextView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         
-        this.mCanvas = canvas;
-        
-        drawTextProgress();
+        drawTextProgress(canvas);
+        if (mProgress == 0) {
+            mHandler.sendEmptyMessageDelayed(0, ANIM_TIME);
+        }
     }
 
-    private void drawTextProgress() {
-        if (mCanvas == null || mTvContent == null) {
+    private void drawTextProgress(Canvas canvas) {
+        if (canvas == null || mTvContent == null) {
             return;
         }
+        float xDistance = mAnimWidth / 2 * mProgress;
+        float yDistance = mAnimHeight / 2 * mProgress;
         // 左上
-        mCanvas.save();
-        mCanvas.clipRect(0, 0, mTvWidth / 2, mTvHeight / 2);
-        mCanvas.drawText(mTvContent, -mBound.left, -mBound.top, mTextPaint);
-        mCanvas.restore();
+        canvas.save();
+        canvas.clipRect(0, 0, mTvWidth / 2 + xDistance, mTvHeight / 2 + yDistance);
+        canvas.drawText(mTvContent, -mBound.left + xDistance, -mBound.top + yDistance, mTextPaint);
+        canvas.restore();
         
         // 左下
-        mCanvas.save();
-        mCanvas.clipRect(0, mHeight - mTvHeight / 2, mTvWidth / 2, mHeight);
-        mCanvas.drawText(mTvContent, -mBound.left, mHeight - mBound.bottom, mTextPaint);
-        mCanvas.restore();
+        canvas.save();
+        canvas.clipRect(0, mHeight - mTvHeight / 2 - yDistance, mTvWidth / 2 + xDistance, mHeight);
+        canvas.drawText(mTvContent, -mBound.left + xDistance, mHeight - mBound.bottom - yDistance, mTextPaint);
+        canvas.restore();
         
         // 右上
-        mCanvas.save();
-        mCanvas.clipRect(mWidth - mTvWidth / 2, 0, mWidth, mTvHeight / 2);
-        mCanvas.drawText(mTvContent, mWidth - mBound.right, -mBound.top, mTextPaint);
-        mCanvas.restore();
+        canvas.save();
+        canvas.clipRect(mWidth - mTvWidth / 2 - xDistance, 0, mWidth, mTvHeight / 2 + yDistance);
+        canvas.drawText(mTvContent, mWidth - mBound.right - xDistance, -mBound.top + yDistance, mTextPaint);
+        canvas.restore();
         
         // 右下
-        mCanvas.save();
-        mCanvas.clipRect(mWidth - mTvWidth / 2, mHeight - mTvHeight / 2, mWidth, mHeight);
-        mCanvas.drawText(mTvContent, mWidth - mBound.right, mHeight - mBound.bottom, mTextPaint);
-        mCanvas.restore();
+        canvas.save();
+        canvas.clipRect(mWidth - mTvWidth / 2 - xDistance, mHeight - mTvHeight / 2 - yDistance, mWidth, mHeight);
+        canvas.drawText(mTvContent, mWidth - mBound.right - xDistance, mHeight - mBound.bottom - yDistance, mTextPaint);
+        canvas.restore();
     }
 
 }
